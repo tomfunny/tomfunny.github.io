@@ -1,0 +1,26 @@
+{
+  "name": "tomfunny.github.io",
+  "version": "1.0.0",
+  "description": "abc",
+  "main": "index.js",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomfunny/tomfunny.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tomfunny/tomfunny.github.io/issues"
+  },
+  "homepage": "https://github.com/tomfunny/tomfunny.github.io#readme",
+  "dependencies": {
+    "astro": "^5.14.4"
+  }
+}
