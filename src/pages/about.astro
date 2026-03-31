@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="关于我 - Tom's Blog" description="关于 Tom 的介绍">
+  <Header slot="header" />
+  
+  <section class="about-section">
+    <h1>关于我</h1>
+    
+    <div class="about-content">
+      <p>你好！我是 Tom，一名热爱技术的开发者。</p>
+      
+      <p>这个博客是我记录和分享的地方。在这里，你会看到：</p>
+      
+      <ul>
+        <li>技术文章 - 前端开发、工具使用、项目经验</li>
+        <li>生活随笔 - 读书、电影、旅行见闻</li>
+        <li>学习记录 - 新技能的学习过程和心得</li>
+      </ul>
+      
+      <h2>联系我</h2>
+      
+      <p>欢迎通过以下方式与我交流：</p>
+      
+      <ul>
+        <li>GitHub: <a href="https://github.com/tomfunny" target="_blank" rel="noopener">@tomfunny</a></li>
+        <li>Email: <a href="mailto:your@email.com">your@email.com</a></li>
+      </ul>
+      
+      <h2>关于这个博客</h2>
+      
+      <p>这个博客使用 <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 构建，部署在 GitHub Pages 上。</p>
+      
+      <p>设计风格追求简约干净，支持自动深色模式。如果你对这个博客的技术实现感兴趣，欢迎查看 <a href="https://github.com/tomfunny/tomfunny.github.io" target="_blank" rel="noopener">源代码</a>。</p>
+    </div>
+  </section>
+  
+  <Footer slot="footer" />
+</Layout>
+
+<style>
+  .about-section {
+    padding: 3rem 0;
+  }
+  
+  .about-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .about-content {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+  }
+  
+  .about-content h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .about-content ul {
+    margin-bottom: 1.5rem;
+  }
+  
+  .about-content li {
+    margin-bottom: 0.5rem;
+  }
+</style>

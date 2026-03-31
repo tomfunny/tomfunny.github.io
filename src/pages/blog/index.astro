@@ -1,0 +1,135 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog', ({ data }) => {
+  return !data.draft;
+});
+
+// 按日期排序
+posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Layout title="博客 - Tom's Blog" description="Tom 的博客文章列表">
+  <Header slot="header" />
+  
+  <section class="blog-section">
+    <h1>全部文章</h1>
+    <p class="section-description">
+      共 {posts.length} 篇文章
+    </p>
+    
+    <div class="posts-list">
+      {posts.map((post) => (
+        <article class="post-item">
+          <a href={`/blog/${post.id}/`}>
+            <div class="post-content">
+              <h2>{post.data.title}</h2>
+              <p class="post-excerpt">
+                {post.data.description || post.body.slice(0, 200) + '...'}
+              </p>
+              <div class="post-meta">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {post.data.pubDate.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <div class="tags">
+                    {post.data.tags.map((tag) => (
+                      <span class="tag">#{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+  
+  <Footer slot="footer" />
+</Layout>
+
+<style>
+  .blog-section {
+    padding: 3rem 0;
+  }
+  
+  .blog-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .section-description {
+    color: var(--color-text-muted);
+    margin-bottom: 3rem;
+  }
+  
+  .posts-list {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  .post-item a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .post-item {
+    padding: 2rem;
+    background-color: var(--color-card-bg);
+    border-radius: var(--radius);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .post-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .post-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+    transition: color 0.2s ease;
+  }
+  
+  .post-item:hover .post-content h2 {
+    color: var(--color-primary);
+  }
+  
+  .post-excerpt {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+  
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .tag {
+    background-color: var(--color-bg);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    color: var(--color-primary);
+  }
+</style>

@@ -1,0 +1,113 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+// 收集所有分类并统计文章数
+const categoryMap = new Map<string, number>();
+posts.forEach((post) => {
+  post.data.categories?.forEach((cat) => {
+    categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
+  });
+});
+
+// 转换为数组并排序
+const categories = Array.from(categoryMap.entries())
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+---
+
+<Layout title="分类 - Tom's Blog" description="浏览所有分类">
+  <Header slot="header" />
+  
+  <section class="categories-section">
+    <h1>所有分类</h1>
+    <p class="section-description">
+      共 {categories.length} 个分类，{posts.length} 篇文章
+    </p>
+    
+    <div class="categories-list">
+      {categories.map(([category, count]) => (
+        <a href={`/categories/${category.toLowerCase()}/`} class="category-card">
+          <div class="category-info">
+            <h2>{category}</h2>
+            <p class="category-count">{count} 篇文章</p>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+  
+  <Footer slot="footer" />
+</Layout>
+
+<style>
+  .categories-section {
+    padding: 3rem 0;
+  }
+  
+  .categories-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .section-description {
+    color: var(--color-text-muted);
+    margin-bottom: 3rem;
+  }
+  
+  .categories-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .category-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: var(--color-card-bg);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: all 0.2s ease;
+    border: 1px solid var(--color-border);
+  }
+  
+  .category-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .category-info h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+    color: var(--color-text);
+  }
+  
+  .category-count {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+  
+  .arrow {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    transition: transform 0.2s ease;
+  }
+  
+  .category-card:hover .arrow {
+    transform: translateX(4px);
+  }
+  
+  @media (max-width: 640px) {
+    .categories-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

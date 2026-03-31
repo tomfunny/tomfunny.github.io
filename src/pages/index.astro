@@ -1,15 +1,175 @@
 ---
-// 欢迎使用 Astro！这些三破折号代码围栏之间的内容是你的 "component frontmatter"。它不会在浏览器中运行。
-console.log('这段代码在你的终端运行，而不是在浏览器中！');
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// 获取最新文章
+import { getCollection } from 'astro:content';
+const posts = await getCollection('blog', ({ data }) => {
+  return !data.draft;
+});
+
+// 按日期排序
+posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const recentPosts = posts.slice(0, 5);
 ---
-<!-- 下面是你的 "component template"。它只是 HTML，但加入了一些魔法，帮助你构建出色的模板。 -->
-<html>
-  <body>
-    <h1>Hello, World!</h1>
-  </body>
-</html>
+
+<Layout title="Tom's Blog - 首页" description="Tom 的个人博客，分享技术、生活和思考">
+  <Header slot="header" />
+  
+  <section class="hero">
+    <h1>你好，我是 Tom 👋</h1>
+    <p class="hero-description">
+      这里是我的个人空间，记录技术探索、生活感悟和学习心得。
+      希望能通过文字，与你分享有价值的思考。
+    </p>
+  </section>
+  
+  <section class="posts-section">
+    <div class="section-header">
+      <h2>最新文章</h2>
+      <a href="/blog" class="view-all">
+        查看全部 →
+      </a>
+    </div>
+    
+    <div class="posts-grid">
+      {recentPosts.map((post) => (
+        <article class="post-card">
+          <a href={`/blog/${post.id}/`}>
+            <h3>{post.data.title}</h3>
+            <p class="post-excerpt">
+              {post.data.description || post.body.slice(0, 150) + '...'}
+            </p>
+            <div class="post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('zh-CN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </time>
+              {post.data.tags && post.data.tags.length > 0 && (
+                <span class="tags-preview">
+                  · {post.data.tags.slice(0, 2).join(', ')}
+                </span>
+              )}
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+  
+  <Footer slot="footer" />
+</Layout>
+
 <style>
-  h1 {
-    color: orange;
+  .hero {
+    padding: 4rem 0 3rem;
+    text-align: center;
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-description {
+    color: var(--color-text-muted);
+    font-size: 1.125rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  
+  .posts-section {
+    padding: 2rem 0 4rem;
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  
+  .view-all {
+    color: var(--color-primary);
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .view-all:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  .posts-grid {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  .post-card {
+    background-color: var(--color-card-bg);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .post-card a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .post-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+    transition: color 0.2s ease;
+  }
+  
+  .post-card:hover h3 {
+    color: var(--color-primary);
+  }
+  
+  .post-excerpt {
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  
+  .post-meta {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+  
+  .tags-preview {
+    color: var(--color-primary);
+  }
+  
+  @media (max-width: 640px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+    
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
   }
 </style>

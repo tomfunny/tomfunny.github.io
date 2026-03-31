@@ -1,0 +1,169 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  
+  const tagMap = new Map<string, typeof posts>();
+  posts.forEach((post) => {
+    post.data.tags?.forEach((tag) => {
+      const key = tag.toLowerCase();
+      if (!tagMap.has(key)) {
+        tagMap.set(key, []);
+      }
+      tagMap.get(key)!.push(post);
+    });
+  });
+  
+  return Array.from(tagMap.entries()).map(([tag, posts]) => ({
+    params: { tag },
+    props: { 
+      tagName: tag,
+      posts: posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    },
+  }));
+}
+
+const { tagName, posts } = Astro.props;
+
+// 获取原始标签名（保持大小写）
+const originalTagName = posts[0]?.data.tags?.find(
+  (t) => t.toLowerCase() === tagName
+) || tagName;
+---
+
+<Layout title={`#${originalTagName} - Tom's Blog`} description={`包含标签 #${originalTagName} 的文章`}>
+  <Header slot="header" />
+  
+  <section class="tag-archive">
+    <div class="tag-header">
+      <span class="tag-label">标签</span>
+      <h1>#{originalTagName}</h1>
+      <p class="post-count">共 {posts.length} 篇文章</p>
+    </div>
+    
+    <div class="posts-list">
+      {posts.map((post) => (
+        <article class="post-item">
+          <a href={`/blog/${post.id}/`}>
+            <div class="post-content">
+              <h2>{post.data.title}</h2>
+              <p class="post-excerpt">
+                {post.data.description || post.body.slice(0, 200) + '...'}
+              </p>
+              <div class="post-meta">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {post.data.pubDate.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+    
+    <div class="back-link">
+      <a href="/tags/">← 返回标签列表</a>
+    </div>
+  </section>
+  
+  <Footer slot="footer" />
+</Layout>
+
+<style>
+  .tag-archive {
+    padding: 3rem 0;
+  }
+  
+  .tag-header {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+  
+  .tag-label {
+    display: inline-block;
+    background-color: var(--color-card-bg);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+  
+  .tag-header h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+  }
+  
+  .post-count {
+    color: var(--color-text-muted);
+  }
+  
+  .posts-list {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  
+  .post-item a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .post-item {
+    padding: 2rem;
+    background-color: var(--color-card-bg);
+    border-radius: var(--radius);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .post-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .post-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+    transition: color 0.2s ease;
+  }
+  
+  .post-item:hover .post-content h2 {
+    color: var(--color-primary);
+  }
+  
+  .post-excerpt {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  
+  .post-meta time {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+  
+  .back-link {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+  
+  .back-link a {
+    color: var(--color-text-muted);
+    transition: color 0.2s ease;
+  }
+  
+  .back-link a:hover {
+    color: var(--color-primary);
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+const navLinks = [
+  { href: '/', text: '首页' },
+  { href: '/blog', text: '博客' },
+  { href: '/tags', text: '标签' },
+  { href: '/categories', text: '分类' },
+  { href: '/about', text: '关于' },
+];
+---
+
+<header class="header">
+  <div class="container header-content">
+    <a href="/" class="logo">
+      Tom's Blog
+    </a>
+    
+    <nav class="nav">
+      {navLinks.map((link) => (
+        <a 
+          href={link.href} 
+          class="nav-link"
+          class:list={{ active: Astro.url.pathname === link.href }}
+        >
+          {link.text}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    background-color: var(--color-bg);
+    z-index: 100;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    transition: color 0.2s ease;
+  }
+  
+  .logo:hover {
+    color: var(--color-primary);
+  }
+  
+  .nav {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .nav-link {
+    color: var(--color-text-muted);
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--color-primary);
+  }
+  
+  @media (max-width: 640px) {
+    .nav {
+      gap: 1rem;
+    }
+    
+    .nav-link {
+      font-size: 0.875rem;
+    }
+  }
+</style>
