@@ -1,7 +1,4 @@
 ---
-import Layout from '../../../../layouts/Layout.astro';
-import Header from '../../../../components/Header.astro';
-import Footer from '../../../../components/Footer.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -28,142 +25,101 @@ export async function getStaticPaths() {
 }
 
 const { categoryName, posts } = Astro.props;
-
-// 获取原始分类名（保持大小写）
-const originalCategoryName = posts[0]?.data.categories?.find(
-  (c) => c.toLowerCase() === categoryName
-) || categoryName;
+const originalCategoryName = posts[0]?.data.categories?.find((c) => c.toLowerCase() === categoryName) || categoryName;
 ---
 
-<Layout title={`${originalCategoryName} - Tom's Blog`} description={`分类 ${originalCategoryName} 下的文章`}>
-  <Header slot="header" />
-  
-  <section class="category-archive">
-    <div class="category-header">
-      <span class="category-label">分类</span>
-      <h1>{originalCategoryName}</h1>
-      <p class="post-count">共 {posts.length} 篇文章</p>
-    </div>
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{originalCategoryName} - Tom's Blog</title>
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header-content">
+        <a href="/" class="logo">Tom's Blog</a>
+        <nav class="nav">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/blog" class="nav-link">博客</a>
+          <a href="/tags" class="nav-link">标签</a>
+          <a href="/categories" class="nav-link active">分类</a>
+          <a href="/about" class="nav-link">关于</a>
+        </nav>
+      </div>
+    </header>
     
-    <div class="posts-list">
-      {posts.map((post) => (
-        <article class="post-item">
-          <a href={`/blog/${post.id}/`}>
-            <div class="post-content">
-              <h2>{post.data.title}</h2>
-              <p class="post-excerpt">
-                {post.data.description || post.body.slice(0, 200) + '...'}
-              </p>
-              <div class="post-meta">
-                <time datetime={post.data.pubDate.toISOString()}>
-                  {post.data.pubDate.toLocaleDateString('zh-CN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-              </div>
-            </div>
-          </a>
-        </article>
-      ))}
-    </div>
+    <main class="container">
+      <section class="category-archive">
+        <div class="category-header">
+          <span class="category-label">分类</span>
+          <h1>{originalCategoryName}</h1>
+          <p class="post-count">共 {posts.length} 篇文章</p>
+        </div>
+        
+        <div class="posts-list">
+          {posts.map((post) => (
+            <article class="post-item">
+              <a href={`/blog/${post.id}/`}>
+                <div class="post-content">
+                  <h2>{post.data.title}</h2>
+                  <p class="post-excerpt">{post.data.description || post.body.slice(0, 200) + '...'}</p>
+                  <div class="post-meta">
+                    <time datetime={post.data.pubDate.toISOString()}>
+                      {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </time>
+                  </div>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+        
+        <div class="back-link">
+          <a href="/categories/">← 返回分类列表</a>
+        </div>
+      </section>
+    </main>
     
-    <div class="back-link">
-      <a href="/categories/">← 返回分类列表</a>
-    </div>
-  </section>
-  
-  <Footer slot="footer" />
-</Layout>
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p class="copyright">© 2026 Tom's Blog. All rights reserved.</p>
+          <div class="footer-links">
+            <a href="https://github.com/tomfunny" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
 
 <style>
-  .category-archive {
-    padding: 3rem 0;
-  }
-  
-  .category-header {
-    margin-bottom: 3rem;
-    text-align: center;
-  }
-  
-  .category-label {
-    display: inline-block;
-    background-color: var(--color-card-bg);
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    margin-bottom: 1rem;
-  }
-  
-  .category-header h1 {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    color: var(--color-primary);
-  }
-  
-  .post-count {
-    color: var(--color-text-muted);
-  }
-  
-  .posts-list {
-    display: grid;
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-  
-  .post-item a {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  .post-item {
-    padding: 2rem;
-    background-color: var(--color-card-bg);
-    border-radius: var(--radius);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .post-item:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .post-content h2 {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-    color: var(--color-text);
-    transition: color 0.2s ease;
-  }
-  
-  .post-item:hover .post-content h2 {
-    color: var(--color-primary);
-  }
-  
-  .post-excerpt {
-    color: var(--color-text-muted);
-    line-height: 1.7;
-    margin-bottom: 1rem;
-  }
-  
-  .post-meta time {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-  }
-  
-  .back-link {
-    text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid var(--color-border);
-  }
-  
-  .back-link a {
-    color: var(--color-text-muted);
-    transition: color 0.2s ease;
-  }
-  
-  .back-link a:hover {
-    color: var(--color-primary);
-  }
+  .header { border-bottom: 1px solid var(--color-border); padding: 1rem 0; position: sticky; top: 0; background-color: var(--color-bg); z-index: 100; }
+  .header-content { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-size: 1.5rem; font-weight: 700; color: var(--color-text); }
+  .nav { display: flex; gap: 2rem; }
+  .nav-link { color: var(--color-text-muted); font-weight: 500; }
+  .nav-link.active { color: var(--color-primary); }
+  .category-archive { padding: 3rem 0; }
+  .category-header { margin-bottom: 3rem; text-align: center; }
+  .category-label { display: inline-block; background-color: var(--color-card-bg); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 1rem; }
+  .category-header h1 { font-size: 3rem; margin-bottom: 0.5rem; color: var(--color-primary); }
+  .post-count { color: var(--color-text-muted); }
+  .posts-list { display: grid; gap: 2rem; margin-bottom: 3rem; }
+  .post-item a { text-decoration: none; color: inherit; }
+  .post-item { padding: 2rem; background-color: var(--color-card-bg); border-radius: var(--radius); }
+  .post-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .post-content h2 { font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--color-text); }
+  .post-item:hover .post-content h2 { color: var(--color-primary); }
+  .post-excerpt { color: var(--color-text-muted); line-height: 1.7; margin-bottom: 1rem; }
+  .post-meta time { font-size: 0.875rem; color: var(--color-text-muted); }
+  .back-link { text-align: center; padding-top: 2rem; border-top: 1px solid var(--color-border); }
+  .back-link a { color: var(--color-text-muted); }
+  .footer { border-top: 1px solid var(--color-border); padding: 2rem 0; margin-top: 4rem; }
+  .footer-content { display: flex; justify-content: space-between; align-items: center; }
+  .copyright { color: var(--color-text-muted); font-size: 0.875rem; }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { color: var(--color-text-muted); font-size: 0.875rem; }
 </style>
