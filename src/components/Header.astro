@@ -24,6 +24,35 @@ const navLinks = [
           {link.text}
         </a>
       ))}
+      
+      <!-- 主题切换开关 - 胶囊形状 -->
+      <label class="theme-switch" aria-label="切换主题">
+        <input type="checkbox" id="themeToggle" />
+        <span class="slider">
+          <!-- 太阳图标 -->
+          <span class="sun-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </g>
+            </svg>
+          </span>
+          <!-- 月亮图标 -->
+          <span class="moon-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </span>
+        </span>
+      </label>
     </nav>
   </div>
 </header>
@@ -58,6 +87,7 @@ const navLinks = [
   
   .nav {
     display: flex;
+    align-items: center;
     gap: 2rem;
   }
   
@@ -72,7 +102,122 @@ const navLinks = [
     color: var(--color-primary);
   }
   
-  @media (max-width: 640px) {
+  /* 主题切换开关 - 胶囊形状 */
+  .theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+  }
+  
+  .theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #2d2d2d;
+    border-radius: 30px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+  
+  .slider::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 4px;
+    top: 4px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* 太阳图标 */
+  .slider .sun-icon {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    color: #fbbf24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .slider .sun-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* 月亮图标 */
+  .slider .moon-icon {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    z-index: 1;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    color: #a78bfa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .slider .moon-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* 选中状态（深色模式） */
+  .theme-switch input:checked + .slider {
+    background-color: #1a1a2e;
+  }
+  
+  .theme-switch input:checked + .slider::before {
+    left: calc(100% - 26px);
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 50%, #c4b5fd 100%);
+  }
+  
+  .theme-switch input:checked + .slider .sun-icon {
+    opacity: 0.5;
+  }
+  
+  .theme-switch input:checked + .slider .moon-icon {
+    opacity: 1;
+  }
+  
+  /* 悬停效果 */
+  .theme-switch:hover .slider {
+    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.3);
+  }
+  
+  /* 聚焦效果 */
+  .theme-switch:focus-within .slider {
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.4);
+  }
+  
+  @media (max-width: 768px) {
     .nav {
       gap: 1rem;
     }
@@ -80,5 +225,59 @@ const navLinks = [
     .nav-link {
       font-size: 0.875rem;
     }
+    
+    .theme-switch {
+      width: 56px;
+      height: 28px;
+    }
+    
+    .slider::before {
+      width: 20px;
+      height: 20px;
+      left: 4px;
+      top: 4px;
+    }
+    
+    .theme-switch input:checked + .slider::before {
+      left: calc(100% - 24px);
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .header-content {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .nav {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
   }
 </style>
+
+<script>
+  const themeToggle = document.getElementById('themeToggle');
+  
+  // 初始化主题
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeToggle.checked = savedTheme === 'dark';
+  } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeToggle.checked = true;
+  }
+  
+  // 主题切换
+  themeToggle?.addEventListener('change', () => {
+    if (themeToggle.checked) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+    }
+  });
+</script>
